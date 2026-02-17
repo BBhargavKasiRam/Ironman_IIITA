@@ -1,0 +1,5 @@
+{
+  "allowed_scopes": ["security_analysis"],
+  "blocked_actions": ["financial_transaction"],
+  "max_risk_score": 85
+}

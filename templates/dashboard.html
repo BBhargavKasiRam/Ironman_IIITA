@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Secure Scam Agent Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            margin: 30px;
+        }
+
+        h1 {
+            color: #222;
+        }
+
+        .metrics-container {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            width: 200px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .card h2 {
+            margin: 0;
+            font-size: 28px;
+        }
+
+        .approved { color: #4CAF50; }
+        .blocked { color: #F44336; }
+        .requests { color: #2196F3; }
+
+        .chart-container {
+            width: 600px;
+            margin-bottom: 40px;
+        }
+
+        ul {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <h1>🛡 Secure Scam Agent Intelligence Dashboard</h1>
+
+    <!-- Metric Cards -->
+    <div class="metrics-container">
+
+        <div class="card">
+            <p>Total Requests</p>
+            <h2 class="requests">{{ metrics.total_requests }}</h2>
+        </div>
+
+        <div class="card">
+            <p>Approved Actions</p>
+            <h2 class="approved">{{ metrics.approved_actions }}</h2>
+        </div>
+
+        <div class="card">
+            <p>Blocked Actions</p>
+            <h2 class="blocked">{{ metrics.blocked_actions }}</h2>
+        </div>
+
+    </div>
+
+    <!-- Chart -->
+    <div class="chart-container">
+        <canvas id="metricsChart"></canvas>
+    </div>
+
+    <!-- Flagged Messages -->
+    <h2>🚨 Flagged High-Risk Messages</h2>
+
+    <ul>
+        {% for msg in flagged %}
+            <li><b>Risk:</b> {{ msg[2] }} | {{ msg[1] }}</li>
+        {% endfor %}
+    </ul>
+
+
+    <script>
+        const metricsData = JSON.parse('{{ metrics | tojson | safe }}');
+
+        const data = {
+            labels: ["Approved", "Blocked"],
+            datasets: [{
+                label: "Action Distribution",
+                data: [metricsData.approved_actions, metricsData.blocked_actions],
+                backgroundColor: ["#4CAF50", "#F44336"]
+            }]
+        };
+
+        new Chart(
+            document.getElementById('metricsChart'),
+            {
+                type: 'pie',
+                data: data
+            }
+        );
+
+        // Auto refresh every 5 seconds
+        setTimeout(() => {
+            location.reload();
+        }, 5000);
+    </script>
+
+</body>
+</html>
